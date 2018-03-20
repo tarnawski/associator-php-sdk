@@ -10,12 +10,17 @@ class Associator extends Client
     /** @var string */
     private $apiKey;
 
+    /** @var Client */
+    private $client;
+
     /**
      * Associator constructor.
+     * @param Client $client
      * @param $apiKey
      */
-    public function __construct($apiKey)
+    public function __construct(Client $client, $apiKey)
     {
+        $this->client = $client;
         $this->apiKey = $apiKey;
     }
 
@@ -28,7 +33,7 @@ class Associator extends Client
     {
         $url = sprintf('%s/%s/transactions', self::BASE_URL, self::VERSION);
         try {
-            $data = $this->request($url, 'POST', [
+            $data = $this->client->request($url, 'POST', [
                 'api_key' => $this->apiKey,
                 'transaction' => $transactions
             ]);
@@ -63,13 +68,13 @@ class Associator extends Client
         $query = http_build_query($parameters);
         $url = sprintf('%s/%s/associations?%s', self::BASE_URL, self::VERSION, $query);
         try {
-            $data = $this->request($url);
+            $data = $this->client->request($url);
         } catch (ClientException $exception) {
             return [];
         }
 
         $response = json_decode($data, true);
 
-        return $response['associations'];
+        return isset($response['associations']) ? $response['associations'] : [];
     }
 }
