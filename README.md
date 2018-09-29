@@ -12,15 +12,14 @@ composer require tarnawski/associator-php-sdk
 ```php
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
-
+use Associator\Client;
 use Associator\Associator;
 
-$associator = new Associator('APPLICATION_KEY');
+require_once '../vendor/autoload.php';
 
-// Save single transaction items
-$associator->saveTransaction(['3', '8', '16', '256']);
+$client = new Client();
+$associator = new Associator($client);
+$associator->setApiKey('bf357212-41d4-41de-a0a5-01372c939583');
 
-// Get array of associate items
-$associatedItem = $associator->getAssociations(['3', '8', '16'], 5, 5);
+$result = $associator->getAssociations([2], 0.5, 0.5);
 ```
