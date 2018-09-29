@@ -2,6 +2,7 @@ Associator PHP SDK
 ==================
 This repository contains the open source PHP SDK that allows you to access the AssociatorAPI from your PHP application.
 
+[![Build Status](https://travis-ci.org/tarnawski/associator-php-sdk.svg?branch=master)](https://travis-ci.org/tarnawski/associator-php-sdk
 ### Installation
 
 To install Associator PHP SDK, simply:
