@@ -79,30 +79,62 @@ class AssociatorTest extends \PHPUnit\Framework\TestCase
     public function testGetAssociationsWithSupportAndConfidence()
     {
         $response = ["status" => "Success", "associations" => [[3],[8,16]]];
-        $client = $this->getMockBuilder(\Associator\Client::class)
+        $client = $this->getMockBuilder(Client::class)
             ->setMethods(array('request'))
             ->getMock();
         $client->expects($this->once())
             ->method('request')
-            ->with('api.associator.eu/v1/associations?api_key=6090b2a5-c5fe-421b-b1f9-fa67dca2d829&samples=%5B5%2C18%5D&support=10&confidence=20')
+            ->with('api.associator.eu/v1/associations?api_key=6090b2a5-c5fe-421b-b1f9-fa67dca2d829&samples=%5B5%2C18%5D&support=0.5&confidence=0.5')
             ->willReturn(json_encode($response));
 
         $associator = new Associator($client);
         $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
 
-        $this->assertEquals($response, $associator->getAssociations([5,18], 10, 20));
+        $this->assertEquals($response, $associator->getAssociations([5,18], 0.5, 0.5));
     }
 
     public function testGetAssociationsWithToSmallSupportValue()
     {
         $response = ['status' => 'Error', 'message' => 'Support must be between 0.0 and 1.0'];
-        $client = $this->getMockBuilder(\Associator\Client::class)->getMock();
-
+        $client = $this->getMockBuilder(Client::class)->getMock();
 
         $associator = new Associator($client);
         $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
 
         $this->assertEquals($response, $associator->getAssociations([5,18], 0, 0.5));
+    }
+
+    public function testGetAssociationsWithToLargeSupportValue()
+    {
+        $response = ['status' => 'Error', 'message' => 'Support must be between 0.0 and 1.0'];
+        $client = $this->getMockBuilder(Client::class)->getMock();
+
+        $associator = new Associator($client);
+        $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
+
+        $this->assertEquals($response, $associator->getAssociations([5,18], 1.2, 0.5));
+    }
+
+    public function testGetAssociationsWithToSmallConfidenceValue()
+    {
+        $response = ['status' => 'Error', 'message' => 'Confidence must be between 0.0 and 1.0'];
+        $client = $this->getMockBuilder(Client::class)->getMock();
+
+        $associator = new Associator($client);
+        $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
+
+        $this->assertEquals($response, $associator->getAssociations([5,18], 0.5, 0));
+    }
+
+    public function testGetAssociationsWithToLargeConfidenceValue()
+    {
+        $response = ['status' => 'Error', 'message' => 'Confidence must be between 0.0 and 1.0'];
+        $client = $this->getMockBuilder(Client::class)->getMock();
+
+        $associator = new Associator($client);
+        $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
+
+        $this->assertEquals($response, $associator->getAssociations([5,18], 0.5, 1.3));
     }
 
     public function testGetAssociationsWhenClientThrowException()
