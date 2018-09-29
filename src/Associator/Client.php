@@ -2,8 +2,13 @@
 
 namespace Associator;
 
-class Client
+use Associator\Exception\ClientException;
+
+class Client implements ClientInterface
 {
+    const HTTP_GET = 'GET';
+    const HTTP_POST = 'POST';
+
     /**
      * @param $url
      * @param string $method
@@ -11,7 +16,7 @@ class Client
      * @return mixed
      * @throws ClientException
      */
-    public function request($url, $method = 'GET', $data = [])
+    public function request($url, $method = self::HTTP_GET, $data = [])
     {
         $curl = curl_init();
 
@@ -19,17 +24,22 @@ class Client
         $settings[CURLOPT_RETURNTRANSFER] = 1;
         $settings[CURLOPT_HTTPHEADER] = ['Content-Type:application/json'];
 
-        if ($method === 'POST') {
+        if ($method === self::HTTP_POST) {
             $settings[CURLOPT_CUSTOMREQUEST] = "POST";
             $settings[CURLOPT_POSTFIELDS] = json_encode($data);
         }
 
         curl_setopt_array($curl, $settings);
         $response = curl_exec($curl);
+
+        if (curl_error($curl)) {
+            $error = curl_error($curl);
+        }
+
         curl_close($curl);
 
-        if (!$response) {
-            throw new ClientException();
+        if (isset($error)) {
+            throw new ClientException($error);
         }
 
         return $response;
