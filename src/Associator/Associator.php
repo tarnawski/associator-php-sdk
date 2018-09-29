@@ -78,6 +78,14 @@ class Associator extends Client
             return ['status' => 'Error', 'message' => 'Api key must be set.'];
         }
 
+        if (isset($support) && ($support >= 1.0 || $support <= 0.0)) {
+            return ['status' => 'Error', 'message' => 'Support must be between 0.0 and 1.0'];
+        }
+
+        if (isset($confidence) && ($confidence >= 1.0 || $confidence <= 0.0)) {
+            return ['status' => 'Error', 'message' => 'Confidence must be between 0.0 and 1.0'];
+        }
+
         $parameters['api_key'] = $this->getApiKey();
         $parameters['samples'] = json_encode($samples);
 

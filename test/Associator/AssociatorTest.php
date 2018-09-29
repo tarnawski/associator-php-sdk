@@ -79,7 +79,6 @@ class AssociatorTest extends \PHPUnit\Framework\TestCase
     public function testGetAssociationsWithSupportAndConfidence()
     {
         $response = ["status" => "Success", "associations" => [[3],[8,16]]];
-
         $client = $this->getMockBuilder(\Associator\Client::class)
             ->setMethods(array('request'))
             ->getMock();
@@ -92,6 +91,18 @@ class AssociatorTest extends \PHPUnit\Framework\TestCase
         $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
 
         $this->assertEquals($response, $associator->getAssociations([5,18], 10, 20));
+    }
+
+    public function testGetAssociationsWithToSmallSupportValue()
+    {
+        $response = ['status' => 'Error', 'message' => 'Support must be between 0.0 and 1.0'];
+        $client = $this->getMockBuilder(\Associator\Client::class)->getMock();
+
+
+        $associator = new Associator($client);
+        $associator->setApiKey('6090b2a5-c5fe-421b-b1f9-fa67dca2d829');
+
+        $this->assertEquals($response, $associator->getAssociations([5,18], 0, 0.5));
     }
 
     public function testGetAssociationsWhenClientThrowException()
