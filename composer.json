@@ -1,5 +1,6 @@
 {
   "name": "tarnawski/associator-php-sdk",
+  "description": "PHP SDK to allow access to AssociatorAPI",
   "license": "MIT",
   "authors": [
     {
