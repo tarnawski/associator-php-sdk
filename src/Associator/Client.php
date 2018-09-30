@@ -23,6 +23,8 @@ class Client implements ClientInterface
         $settings[CURLOPT_URL] = $url;
         $settings[CURLOPT_RETURNTRANSFER] = 1;
         $settings[CURLOPT_HTTPHEADER] = ['Content-Type:application/json'];
+        $settings[CURLOPT_CONNECTTIMEOUT] = 0;
+        $settings[CURLOPT_TIMEOUT] = 600;
 
         if ($method === self::HTTP_POST) {
             $settings[CURLOPT_CUSTOMREQUEST] = "POST";
