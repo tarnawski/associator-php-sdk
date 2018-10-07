@@ -9,7 +9,9 @@
     }
   ],
   "autoload": {
-    "psr-4": { "Associator\\": "src/Associator" }
+    "psr-4": {
+      "Associator\\": "src/Associator"
+    }
   },
   "require": {
     "php": ">=5.6"
