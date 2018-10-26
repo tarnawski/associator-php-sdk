@@ -2,16 +2,15 @@
 
 namespace Associator;
 
-use Associator\Exception\ClientException;
+use Associator\Exception\AssociatorException;
 
-class Associator extends Client
+class Associator
 {
     const ASSOCIATOR_BASE_URL = "api.associator.eu";
     const ASSOCIATOR_VERSION = "v1";
 
     const IMPORT_ITEM_SEPARATOR = ",";
     const IMPORT_TRANSACTION_SEPARATOR = "\n";
-
 
     /** @var string */
     private $apiKey;
@@ -21,7 +20,7 @@ class Associator extends Client
 
     /**
      * Associator constructor.
-     * @param Client $client
+     * @param ClientInterface $client
      */
     public function __construct(ClientInterface $client)
     {
@@ -53,14 +52,10 @@ class Associator extends Client
     public function createApplication($name, $provider)
     {
         $url = sprintf('%s/%s/applications', self::ASSOCIATOR_BASE_URL, self::ASSOCIATOR_VERSION);
-        try {
-            $response = $this->client->request($url, Client::HTTP_POST, [
-                'name' => $name,
-                'provider' => $provider
-            ]);
-        } catch (ClientException $exception) {
-            return ['status' => 'Error', 'message' => $exception->getMessage()];
-        }
+        $response = $this->client->request($url, Client::HTTP_POST, [
+            'name' => $name,
+            'provider' => $provider
+        ]);
 
         return json_decode($response, true);
     }
@@ -68,22 +63,15 @@ class Associator extends Client
     /**
      * Get associated items from AssociatorAPI
      * @param array $samples
-     * @param float $support
-     * @param float $confidence
+     * @param integer|null $support
+     * @param integer|null $confidence
      * @return array
+     * @throws AssociatorException
      */
     public function getAssociations(array $samples, $support = null, $confidence = null)
     {
         if (!$this->getApiKey()) {
-            return ['status' => 'Error', 'message' => 'Api key must be set.'];
-        }
-
-        if (isset($support) && ($support >= 1.0 || $support <= 0.0)) {
-            return ['status' => 'Error', 'message' => 'Support must be between 0.0 and 1.0'];
-        }
-
-        if (isset($confidence) && ($confidence >= 1.0 || $confidence <= 0.0)) {
-            return ['status' => 'Error', 'message' => 'Confidence must be between 0.0 and 1.0'];
+            throw new AssociatorException('Api key must be set.');
         }
 
         $parameters['api_key'] = $this->getApiKey();
@@ -99,11 +87,7 @@ class Associator extends Client
 
         $query = http_build_query($parameters);
         $url = sprintf('%s/%s/associations?%s', self::ASSOCIATOR_BASE_URL, self::ASSOCIATOR_VERSION, $query);
-        try {
-            $response = $this->client->request($url);
-        } catch (ClientException $exception) {
-            return ['status' => 'Error', 'message' => $exception->getMessage()];
-        }
+        $response = $this->client->request($url);
 
         return json_decode($response, true);
     }
@@ -112,22 +96,19 @@ class Associator extends Client
      * Save single transaction items in AssociatorAPI
      * @param array $transactions
      * @return array
+     * @throws AssociatorException
      */
     public function saveTransaction(array $transactions)
     {
         if (!$this->getApiKey()) {
-            return ['status' => 'Error', 'message' => 'Api key must be set.'];
+            throw new AssociatorException('Api key must be set.');
         }
 
         $url = sprintf('%s/%s/transactions', self::ASSOCIATOR_BASE_URL, self::ASSOCIATOR_VERSION);
-        try {
-            $response = $this->client->request($url, Client::HTTP_POST, [
-                'api_key' => $this->getApiKey(),
-                'items' => $transactions
-            ]);
-        } catch (ClientException $exception) {
-            return ['status' => 'Error', 'message' => $exception->getMessage()];
-        }
+        $response = $this->client->request($url, Client::HTTP_POST, [
+            'api_key' => $this->getApiKey(),
+            'items' => $transactions
+        ]);
 
         return json_decode($response, true);
     }
@@ -135,26 +116,23 @@ class Associator extends Client
     /**
      * Import transaction items to AssociatorAPI
      * @param array $data
-     * @return array|mixed
+     * @return array
+     * @throws AssociatorException
      */
     public function importTransactions(array $data)
     {
         if (!$this->getApiKey()) {
-            return ['status' => 'Error', 'message' => 'Api key must be set.'];
+            throw new AssociatorException('Api key must be set.');
         }
 
         $items = array_map('implode', $data, array_fill(0, count($data), self::IMPORT_ITEM_SEPARATOR));
         $transactions = implode(self::IMPORT_TRANSACTION_SEPARATOR, $items);
 
         $url = sprintf('%s/%s/import', self::ASSOCIATOR_BASE_URL, self::ASSOCIATOR_VERSION);
-        try {
-            $response = $this->client->request($url, Client::HTTP_POST, [
-                'api_key' => $this->apiKey,
-                'data' => base64_encode($transactions)
-            ]);
-        } catch (ClientException $exception) {
-            return ['status' => 'Error', 'message' => $exception->getMessage()];
-        }
+        $response = $this->client->request($url, Client::HTTP_POST, [
+            'api_key' => $this->apiKey,
+            'data' => base64_encode($transactions)
+        ]);
 
         return json_decode($response, true);
     }

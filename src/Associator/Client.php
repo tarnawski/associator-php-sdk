@@ -2,7 +2,7 @@
 
 namespace Associator;
 
-use Associator\Exception\ClientException;
+use Associator\Exception\AssociatorException;
 
 class Client implements ClientInterface
 {
@@ -14,7 +14,7 @@ class Client implements ClientInterface
      * @param string $method
      * @param array $data
      * @return mixed
-     * @throws ClientException
+     * @throws AssociatorException
      */
     public function request($url, $method = self::HTTP_GET, $data = [])
     {
@@ -41,7 +41,7 @@ class Client implements ClientInterface
         curl_close($curl);
 
         if (isset($error)) {
-            throw new ClientException($error);
+            throw new AssociatorException($error);
         }
 
         return $response;

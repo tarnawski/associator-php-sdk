@@ -2,7 +2,7 @@
 
 namespace Associator\Exception;
 
-class ClientException extends \Exception
+class AssociatorException extends \Exception
 {
 
 }
