@@ -10,7 +10,7 @@ class Client implements ClientInterface
     const HTTP_POST = 'POST';
 
     /**
-     * @param $url
+     * @param string $url
      * @param string $method
      * @param array $data
      * @return mixed

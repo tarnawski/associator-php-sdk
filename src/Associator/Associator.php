@@ -45,8 +45,8 @@ class Associator
 
     /**
      * Create application in AssociatorAPI
-     * @param $name
-     * @param $provider
+     * @param string $name
+     * @param string $provider
      * @return array
      */
     public function createApplication($name, $provider)
