@@ -16,7 +16,8 @@ before_script:
   - travis_retry composer install
 
 script:
-  - ./vendor/bin/phpcs --standard=PSR2 --encoding=UTF-8 src/ --colors -n -p -s
+  - ./vendor/bin/phpcs
+  - ./vendor/bin/phpstan --level max src/
   - ./vendor/bin/phpcpd --exclude tests src/
   - ./vendor/bin/phpmd src/ text codesize,unusedcode --suffixes .php
   - ./vendor/bin/phpunit
