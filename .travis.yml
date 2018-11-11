@@ -17,7 +17,6 @@ before_script:
 
 script:
   - ./vendor/bin/phpcs
-  - ./vendor/bin/phpstan --level max src/
   - ./vendor/bin/phpcpd --exclude tests src/
   - ./vendor/bin/phpmd src/ text codesize,unusedcode --suffixes .php
   - ./vendor/bin/phpunit
