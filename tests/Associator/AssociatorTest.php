@@ -6,29 +6,6 @@ use Associator\Exception\AssociatorException;
 
 class AssociatorTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCreateApplication()
-    {
-        $response = [
-            "id" => "57fadadc-ad93-4134-b1dd-0cb05c5d01ea",
-            "name" => "test",
-            "created_at" => "29-09-2018"
-        ];
-
-        $client = $this->getMockBuilder(Client::class)
-            ->setMethods(array('request'))
-            ->getMock();
-        $client->expects($this->once())
-            ->method('request')
-            ->with('api.associator.eu/v1/applications', 'POST', [
-                'name' => 'test',
-                'provider' => '38145196-b3e2-4dd1-8953-7e5e0647cb6e'
-            ])->willReturn(json_encode($response));
-
-        $associator = new Associator($client);
-
-        $this->assertEquals($response, $associator->createApplication('test', '38145196-b3e2-4dd1-8953-7e5e0647cb6e'));
-    }
-
     public function testGetAssociations()
     {
         $response = ["status" => "Success", "associations" => [[3],[8,16]]];
