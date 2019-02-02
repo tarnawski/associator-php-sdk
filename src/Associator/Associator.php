@@ -44,23 +44,6 @@ class Associator
     }
 
     /**
-     * Create application in AssociatorAPI
-     * @param string $name
-     * @param string $provider
-     * @return array
-     */
-    public function createApplication($name, $provider)
-    {
-        $url = sprintf('%s/%s/applications', self::ASSOCIATOR_BASE_URL, self::ASSOCIATOR_VERSION);
-        $response = $this->client->request($url, Client::HTTP_POST, [
-            'name' => $name,
-            'provider' => $provider
-        ]);
-
-        return json_decode($response, true);
-    }
-
-    /**
      * Get associated items from AssociatorAPI
      * @param array $samples
      * @param integer|null $support
